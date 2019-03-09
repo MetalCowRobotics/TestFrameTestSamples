@@ -5,12 +5,5 @@
     "debugfile": "frcJava_roborio.debugconfig",
     "project": "TestFrameTestSamples",
     "language": "java"
-  },
-  {
-    "artifact": "frcJava (in project TestProject)",
-    "target": "roborio",
-    "debugfile": "frcJava_roborio.debugconfig",
-    "project": "TestProject",
-    "language": "java"
   }
 ]

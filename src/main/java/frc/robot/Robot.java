@@ -1,14 +1,17 @@
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
-  private final Joystick controller = new Joystick(0);
+  private final XboxController controller = new XboxController(1);
   private DriveTrain driveTrain = new DriveTrain();
 
   Servo arm = new Servo(1);
@@ -47,6 +50,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("D", kD);
     SmartDashboard.putNumber("speed", -.3);
     // rightEdge.setSetpoint(lineTarget);
+    CameraServer.getInstance().startAutomaticCapture(0);
   }
 
   @Override
@@ -69,8 +73,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // pushSensor();
-    direction = controller.getX();
-    speed = controller.getY();
+    direction = controller.getX(Hand.kLeft);
+    speed = controller.getY(Hand.kLeft);
+    // if (0 == speed)
+    speed = speed - controller.getTriggerAxis(Hand.kRight) + controller.getTriggerAxis(Hand.kLeft);
+    SmartDashboard.putNumber("Spped", speed);
     // if (linePID.onLine()) {
       if (controller.getRawButton(1)) {
       controller.setRumble(RumbleType.kRightRumble, 1);
@@ -81,6 +88,7 @@ public class Robot extends TimedRobot {
       controller.setRumble(RumbleType.kRightRumble, 0);
       linePID.resetPID();
       driveTrain.drive(speed, direction);
+      driveTrain.slide(controller.getX(Hand.kRight));
       // arm.setBounds(max, deadbandMax, center, deadbandMin, min);
       // arm.set(controller.getX());
     }
